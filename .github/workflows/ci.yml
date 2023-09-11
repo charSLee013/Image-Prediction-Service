@@ -62,6 +62,8 @@ jobs:
           profile: ${{ env.TOOLCHAIN_PROFILE }}
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           override: true
+      - name: Install protobuf-compiler
+        run: sudo apt update -qq && sudo apt install -y protobuf-compiler libssl-dev pkg-config
       - name: Cache
         uses: Swatinem/rust-cache@v1
       - name: Run cargo test

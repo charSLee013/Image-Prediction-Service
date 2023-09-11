@@ -39,10 +39,12 @@ pub fn read_opts() -> Result<Opts, Box<dyn std::error::Error>> {
     }
 
     // Check if tensorflow_api_addr starts with "http://" or "https://"
-    if !opts.tensorflow_api_addr.starts_with("http://") && !opts.tensorflow_api_addr.starts_with("https://") {
+    if !opts.tensorflow_api_addr.starts_with("http://")
+        && !opts.tensorflow_api_addr.starts_with("https://")
+    {
         return Err(format!("Invalid tensorflow_api_addr: {}", opts.tensorflow_api_addr).into());
     }
-    
+
     Ok(opts)
 }
 

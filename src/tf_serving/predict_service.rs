@@ -62,7 +62,7 @@ struct PredctionResponse {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use mockito::{mock};
+    use mockito::mock;
 
     // 测试当请求成功并返回有效的JSON数据时，是否能正确解析预测结果
     #[tokio::test]

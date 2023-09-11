@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+use anyhow::{anyhow, Context, Result};
 use std::error::Error as StdError;
 use std::fmt;
-use anyhow::{anyhow, Context, Result};
 
 // 定义一个结构体，用于表示响应的Json数据
 #[derive(Serialize, Deserialize, Debug)]
@@ -28,7 +28,6 @@ struct Status {
     #[serde(rename = "error_message")]
     error_message: String,
 }
-
 
 // 定义一个异步函数，接受模型名称和版本，以及可选的标签
 #[allow(dead_code)]
@@ -71,7 +70,12 @@ async fn get_response(
 
 // 定义一个函数，接受模型名称和版本，以及可选的标签
 #[allow(dead_code)]
-async fn get_model_status(url: &str, model_name: &str, version: &str, label: Option<&str>) -> Result<()> {
+async fn get_model_status(
+    url: &str,
+    model_name: &str,
+    version: &str,
+    label: Option<&str>,
+) -> Result<()> {
     // 调用异步函数get_response，并等待结果
     let response = get_response(url, model_name, version, label)
         .await // 等待异步函数完成
@@ -104,7 +108,6 @@ async fn get_model_status(url: &str, model_name: &str, version: &str, label: Opt
     }
 }
 
-
 // 定义一个结构体ModelStatusError，用于表示model_status的错误
 #[derive(Debug)]
 struct ModelStatusError {
@@ -135,10 +138,10 @@ impl StdError for ModelStatusError {
     }
 }
 
-# [cfg (test)]
+#[cfg(test)]
 mod tests {
     use super::*;
-    use mockito::{mock};
+    use mockito::mock;
 
     // 测试get_response函数能够正确地发送GET请求，并返回Response类型的结果
     #[tokio::test]
@@ -162,14 +165,11 @@ mod tests {
                 }"#,
             )
             .create();
-        
+
         // 调用get_response函数，并传入模型名称和版本
-        let response =get_response(
-            &mockito::server_url(),
-            "foo",
-            "1",
-            None,
-        ).await.unwrap();
+        let response = get_response(&mockito::server_url(), "foo", "1", None)
+            .await
+            .unwrap();
 
         // 检查响应是否符合预期
         assert_eq!(response.model_version_status.len(), 1);
@@ -222,19 +222,9 @@ mod tests {
             .create();
 
         // 调用get_model_status函数，并传入模型名称和版本
-        let result1 = get_model_status(
-            &mockito::server_url(),
-            "foo",
-            "1",
-            None,
-        ).await;
+        let result1 = get_model_status(&mockito::server_url(), "foo", "1", None).await;
 
-        let result2 = get_model_status(
-            &mockito::server_url(),
-            "bar",
-            "2",
-            None,
-        ).await;
+        let result2 = get_model_status(&mockito::server_url(), "bar", "2", None).await;
 
         // 检查结果是否符合预期
         assert!(result1.is_ok());
@@ -269,12 +259,7 @@ mod tests {
             .create();
 
         // 调用get_response函数，并传入模型名称和版本
-        let response = get_response(
-            &mockito::server_url(),
-            "foo",
-            "1",
-            None,
-        ).await;
+        let response = get_response(&mockito::server_url(), "foo", "1", None).await;
 
         // 检查结果是否为错误
         assert!(response.is_err());
@@ -296,12 +281,7 @@ mod tests {
 
         let url = &mockito::server_url();
         // 调用get_response函数，并传入模型名称和版本
-        let response = get_response(
-            url,
-            "foo",
-            "1",
-            None,
-        ).await;
+        let response = get_response(url, "foo", "1", None).await;
 
         // 检查结果是否为错误
         assert!(response.is_err());
@@ -337,19 +317,9 @@ mod tests {
             .create();
 
         // 调用get_model_status函数，并传入模型名称和版本
-        let result1 = get_model_status(
-            &mockito::server_url(),
-            "foo",
-            "1",
-            None,
-        ).await;
+        let result1 = get_model_status(&mockito::server_url(), "foo", "1", None).await;
 
-        let result2 = get_model_status(
-            &mockito::server_url(),
-            "bar",
-            "2",
-            None,
-        ).await;
+        let result2 = get_model_status(&mockito::server_url(), "bar", "2", None).await;
 
         // 检查结果是否为错误，并包含上下文信息
         assert!(result1.is_err());
@@ -388,12 +358,7 @@ mod tests {
             .create();
 
         // 调用get_model_status函数，并传入模型名称和版本
-        let result = get_model_status(
-            &mockito::server_url(),
-            "foo",
-            "1",
-            None,
-        ).await;
+        let result = get_model_status(&mockito::server_url(), "foo", "1", None).await;
 
         // 检查结果是否为自定义错误，并包含错误码和消息
         assert!(result.is_err());

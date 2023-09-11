@@ -1,12 +1,12 @@
-use log::{info};
+use log::info;
 
-use log4rs::encode::{json::JsonEncoder}; // 引入json模块
 use log4rs::config::{Appender, Config, Logger};
+use log4rs::encode::json::JsonEncoder; // 引入json模块
 
 use log::LevelFilter;
 use log4rs::append::rolling_file::{
     policy::compound::{
-        CompoundPolicy, roll::fixed_window::FixedWindowRoller, trigger::size::SizeTrigger,
+        roll::fixed_window::FixedWindowRoller, trigger::size::SizeTrigger, CompoundPolicy,
     },
     RollingFileAppender,
 };
@@ -19,7 +19,8 @@ pub fn init_logging() -> Result<(), Box<dyn std::error::Error>> {
         let size_limit = 10 * 1024 * 1024;
         let log_dir = env::var("LOG_DIR").unwrap_or_else(|_| ".".to_string()); // 如果你希望，可以从环境变量中读取日志文件夹位置
 
-        let roller = FixedWindowRoller::builder().build(&format!("{}/debug.{{}}.log", log_dir), window_size)?;
+        let roller = FixedWindowRoller::builder()
+            .build(&format!("{}/debug.{{}}.log", log_dir), window_size)?;
         let trigger = SizeTrigger::new(size_limit);
         let roll_strategy = CompoundPolicy::new(Box::new(trigger), Box::new(roller));
         let file_appender = RollingFileAppender::builder()
@@ -28,16 +29,24 @@ pub fn init_logging() -> Result<(), Box<dyn std::error::Error>> {
 
         let config = Config::builder()
             .appender(Appender::builder().build("default", Box::new(file_appender)))
-            .logger(Logger::builder().build(env! ("CARGO_PKG_NAME"), log::LevelFilter::Warn)) // 使用env! ()宏获取Cargo.toml中的App名称，并作为记录器名称的前缀
-            .build(log4rs::config::runtime::Root::builder().appender("default").build(LevelFilter::Debug))?;
+            .logger(Logger::builder().build(env!("CARGO_PKG_NAME"), log::LevelFilter::Warn)) // 使用env! ()宏获取Cargo.toml中的App名称，并作为记录器名称的前缀
+            .build(
+                log4rs::config::runtime::Root::builder()
+                    .appender("default")
+                    .build(LevelFilter::Debug),
+            )?;
 
         log4rs::config::init_config(config)?;
 
-        info!("Logger initialized with file output. Log file is {}", log_file);
+        info!(
+            "Logger initialized with file output. Log file is {}",
+            log_file
+        );
     } else {
         // dev model log
         env_logger::init();
-        info!("Logger initialized with stdout.");    }
+        info!("Logger initialized with stdout.");
+    }
 
     Ok(())
 }

@@ -1,4 +1,3 @@
-
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -34,7 +33,6 @@ pub fn read_config_from_path(
 
     Ok(model_map)
 }
-
 
 #[cfg(test)]
 mod tests {

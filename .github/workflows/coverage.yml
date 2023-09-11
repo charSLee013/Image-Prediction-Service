@@ -1,0 +1,37 @@
+# 触发条件：当有新的push或pull request时
+on: [push, pull_request]
+
+# 工作流名称：Coverage
+name: Coverage
+
+# 工作流任务：coverage
+jobs:
+  coverage:
+    # 任务名称：Run cargo tarpaulin and upload report
+    name: Run cargo tarpaulin and upload report
+    # 运行环境：ubuntu-latest
+    runs-on: ubuntu-latest
+    # 步骤：
+    steps:
+      # 第一步：检出项目代码
+      - uses: actions/checkout@v2
+      # 第二步：安装rust工具链
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+          override: true
+      - name: Install protobuf-compiler
+        run: sudo apt update -qq && sudo apt install -y protobuf-compiler
+      # 第三步：运行cargo tarpaulin并生成测试覆盖率报告
+      - uses: actions-rs/tarpaulin@v0.1
+        with:
+          version: '0.18.0'
+          args: '--out Xml'
+      # 第四步：上传测试覆盖率报告到codecov.io或coveralls.io（二选一）
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          files: ./cobertura.xml
+

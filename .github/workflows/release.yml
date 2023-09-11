@@ -29,6 +29,8 @@ jobs:
           toolchain: stable
           target: ${{ matrix.target }}
           override: true
+      - name: Install protobuf-compiler
+        run: sudo apt update -qq && sudo apt install -y protobuf-compiler libssl-dev pkg-config
       # 第三步：编译rust项目并生成二进制文件
       - uses: actions-rs/cargo@v1
         with:

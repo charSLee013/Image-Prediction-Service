@@ -1,0 +1,7 @@
+models:
+  - name: illust2vec
+    version: 1
+    input_name: b64_input_bytes
+  - name: deepdanbooru2vec
+    version: 1
+    input_name: b64_input_bytes

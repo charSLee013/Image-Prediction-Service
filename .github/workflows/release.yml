@@ -1,0 +1,52 @@
+# 触发条件：当有新的tag推送时
+on:
+  push:
+    tags:
+      - v*
+
+# 工作流名称：Release
+name: Release
+
+# 工作流任务：release
+jobs:
+  release:
+    # 任务名称：release ${{ matrix.target }}
+    name: release ${{ matrix.target }}
+    # 运行环境：ubuntu-latest
+    runs-on: ubuntu-latest
+    # 策略：不快速失败，使用矩阵来指定不同的目标平台
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl, aarch64-apple-darwin]
+    # 步骤：
+    steps:
+      # 第一步：检出项目代码
+      - uses: actions/checkout@v2
+      # 第二步：安装rust工具链
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      # 第三步：编译rust项目并生成二进制文件
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --target ${{ matrix.target }}
+      # 第四步：创建压缩包并包含二进制文件和其他文件（如README.md、LICENSE等）
+      - name: Create archive
+        run: |
+          cd target/${{ matrix.target }}/release/
+          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
+            zip image-prediction-service-${{ matrix.target }}.zip image-prediction-service.exe README.md LICENSE
+          else
+            tar czvf image-prediction-service-${{ matrix.target }}.tar.gz image-prediction-service README.md LICENSE
+          fi
+      # 第五步：创建GitHub Release并上传压缩包作为资产（asset）
+      - name: Create GitHub Release and upload asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/${{ matrix.target }}/release/image-prediction-service-${{ matrix.target }}.*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

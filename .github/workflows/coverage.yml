@@ -1,0 +1,39 @@
+# 触发条件：当有新的push或pull request时
+on: [push, pull_request]
+
+# 工作流名称：Coverage
+name: Coverage
+
+env:
+  RUST_TOOLCHAIN: stable
+  TOOLCHAIN_PROFILE: minimal
+
+# 工作流任务：coverage
+
+jobs:
+  coverage:
+    name: Run cargo coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: ${{ env.TOOLCHAIN_PROFILE }}
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          override: true
+          components: llvm-tools-preview
+      - name: Install grcov
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: grcov
+      - name: Cache
+        uses: Swatinem/rust-cache@v1
+      - name: Run cargo test
+        run: sudo bash -c "ulimit -Sl 512 && ulimit -Hl 512 && sudo -u runner RUSTUP_TOOLCHAIN=stable RUSTFLAGS="-Zinstrument-coverage" LLVM_PROFILE_FILE="coverage-%p-%m.profraw" /home/runner/.cargo/bin/cargo test --all-features"
+      - name: Run grcov
+        run: grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "*cargo*" -o lcov.info
+      - name: Upload coverage
+        run: bash <(curl -s https://codecov.io/bash) -f lcov.info

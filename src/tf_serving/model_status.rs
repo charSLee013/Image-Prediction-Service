@@ -31,6 +31,7 @@ struct Status {
 
 
 // 定义一个异步函数，接受模型名称和版本，以及可选的标签
+#[allow(dead_code)]
 async fn get_response(
     url: &str,
     model_name: &str,
@@ -69,6 +70,7 @@ async fn get_response(
 }
 
 // 定义一个函数，接受模型名称和版本，以及可选的标签
+#[allow(dead_code)]
 async fn get_model_status(url: &str, model_name: &str, version: &str, label: Option<&str>) -> Result<()> {
     // 调用异步函数get_response，并等待结果
     let response = get_response(url, model_name, version, label)

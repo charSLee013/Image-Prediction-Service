@@ -25,7 +25,7 @@ jobs:
       - name: Cache
         uses: Swatinem/rust-cache@v1
       - name: Run cargo test
-        run: bash -c "ulimit -Sl 512 && RUSTUP_TOOLCHAIN=stable RUSTFLAGS="-C instrument-coverage" LLVM_PROFILE_FILE="coverage-%p-%m.profraw" cargo test --all-features"
+        run: bash -c "RUSTUP_TOOLCHAIN=stable RUSTFLAGS="-C instrument-coverage" LLVM_PROFILE_FILE="coverage-%p-%m.profraw" cargo test --all-features"
       - name: Run grcov
         run: grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "*cargo*" -o lcov.info
       - name: Upload coverage

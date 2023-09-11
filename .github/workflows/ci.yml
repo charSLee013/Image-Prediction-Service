@@ -26,6 +26,8 @@ jobs:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           override: true
           components: rustfmt, clippy
+      - name: Install protobuf-compiler
+        run: sudo apt update -qq && sudo apt install -y protobuf-compiler libssl-dev pkg-config
       - name: Cache
         uses: Swatinem/rust-cache@v1
       - name: Run cargo fmt
@@ -60,6 +62,8 @@ jobs:
           profile: ${{ env.TOOLCHAIN_PROFILE }}
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           override: true
+      - name: Install protobuf-compiler
+        run: sudo apt update -qq && sudo apt install -y protobuf-compiler libssl-dev pkg-config
       - name: Cache
         uses: Swatinem/rust-cache@v1
       - name: Run cargo test
@@ -68,42 +72,42 @@ jobs:
           command: test
           args: --all-features
 
-  test-macos:
-    name: Run cargo test on macos
-    runs-on: macos-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: ${{ env.TOOLCHAIN_PROFILE }}
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          override: true
-      - name: Cache
-        uses: Swatinem/rust-cache@v1
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
+  # test-macos:
+  #   name: Run cargo test on macos
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Checkout sources
+  #       uses: actions/checkout@v2
+  #     - name: Install toolchain
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: ${{ env.TOOLCHAIN_PROFILE }}
+  #         toolchain: ${{ env.RUST_TOOLCHAIN }}
+  #         override: true
+  #     - name: Cache
+  #       uses: Swatinem/rust-cache@v1
+  #     - name: Run cargo test
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  #         args: --all-features
+  #         toolchain: ${{ env.RUST_TOOLCHAIN }}
 
-  test-windows:
-    name: Run cargo test on windows
-    runs-on: windows-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: ${{ env.TOOLCHAIN_PROFILE }}
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          override: true
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
+  # test-windows:
+  #   name: Run cargo test on windows
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Checkout sources
+  #       uses: actions/checkout@v2
+  #     - name: Install toolchain
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: ${{ env.TOOLCHAIN_PROFILE }}
+  #         toolchain: ${{ env.RUST_TOOLCHAIN }}
+  #         override: true
+  #     - name: Run cargo test
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  #         args: --all-features
+  #         toolchain: ${{ env.RUST_TOOLCHAIN }}

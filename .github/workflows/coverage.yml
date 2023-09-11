@@ -22,7 +22,7 @@ jobs:
           components: rustfmt, clippy
           override: true
       - name: Install protobuf-compiler
-        run: sudo apt update -qq && sudo apt install -y protobuf-compiler
+        run: sudo apt update -qq && sudo apt install -y protobuf-compiler libssl-dev pkg-config
       # 第三步：运行cargo tarpaulin并生成测试覆盖率报告
       - uses: actions-rs/tarpaulin@v0.1
         with:

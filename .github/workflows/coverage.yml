@@ -6,7 +6,7 @@ name: Coverage
 
 env:
   RUST_TOOLCHAIN: stable
-  TOOLCHAIN_PROFILE: minimal
+  TOOLCHAIN_PROFILE: default
 
 # 工作流任务：coverage
 
@@ -17,13 +17,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: ${{ env.TOOLCHAIN_PROFILE }}
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          override: true
-          components: llvm-tools-preview
       - name: Install grcov
         uses: actions-rs/cargo@v1
         with:

@@ -1,13 +1,12 @@
 name: CI
 
-on: [push, pull_request]
-# on:
-#   push:
-#     paths:
-#       - 'src/**.rs' # 匹配 src 目录下的所有 Rust 代码文件 (*.rs)
-#   pull_request:
-#     paths:
-#       - 'src/**.rs'
+on:
+  push:
+    paths:
+      - 'src/**.rs' # 匹配 src 目录下的所有 Rust 代码文件 (*.rs)
+  pull_request:
+    paths:
+      - 'src/**.rs'
 
 env:
   RUST_TOOLCHAIN: stable

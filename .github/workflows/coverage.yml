@@ -4,36 +4,32 @@ on: [push, pull_request]
 # 工作流名称：Coverage
 name: Coverage
 
-env:
-  RUST_TOOLCHAIN: stable
-  TOOLCHAIN_PROFILE: default
-
 # 工作流任务：coverage
-
 jobs:
   coverage:
-    name: Run cargo coverage
+    # 任务名称：Run cargo tarpaulin and upload report
+    name: Run cargo tarpaulin and upload report
+    # 运行环境：ubuntu-latest
     runs-on: ubuntu-latest
+    # 步骤：
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
+      # 第一步：检出项目代码
+      - uses: actions/checkout@v2
+      # 第二步：安装rust工具链
+      - uses: actions-rs/toolchain@v1
         with:
-          profile: ${{ env.TOOLCHAIN_PROFILE }}
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          toolchain: stable
+          components: rustfmt, clippy
           override: true
-          components: llvm-tools-preview
-      - name: Install grcov
-        uses: actions-rs/cargo@v1
+      # 第三步：运行cargo tarpaulin并生成测试覆盖率报告
+      - uses: actions-rs/tarpaulin@v0.1
         with:
-          command: install
-          args: grcov
-      - name: Cache
-        uses: Swatinem/rust-cache@v1
-      - name: Run cargo test
-        run: bash -c "RUSTUP_TOOLCHAIN=stable RUSTFLAGS="-C instrument-coverage" LLVM_PROFILE_FILE="coverage-%p-%m.profraw" cargo test --all-features"
-      - name: Run grcov
-        run: grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "*cargo*" -o lcov.info
-      - name: Upload coverage
-        run: bash <(curl -s https://codecov.io/bash) -f lcov.info
+          version: '0.18.0'
+          args: '--out Xml'
+      # 第四步：上传测试覆盖率报告到codecov.io或coveralls.io（二选一）
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          files: ./cobertura.xml
+

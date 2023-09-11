@@ -32,7 +32,7 @@ jobs:
       - name: Cache
         uses: Swatinem/rust-cache@v1
       - name: Run cargo test
-        run: sudo bash -c "ulimit -Sl 512 && ulimit -Hl 512 && sudo -u runner RUSTUP_TOOLCHAIN=stable RUSTFLAGS="-C instrument-coverage" LLVM_PROFILE_FILE="coverage-%p-%m.profraw" /home/runner/.cargo/bin/cargo test --all-features"
+        run: sudo bash -c "ulimit -Sl 512 && RUSTUP_TOOLCHAIN=stable RUSTFLAGS="-C instrument-coverage" LLVM_PROFILE_FILE="coverage-%p-%m.profraw" /home/runner/.cargo/bin/cargo test --all-features"
       - name: Run grcov
         run: grcov . --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "*cargo*" -o lcov.info
       - name: Upload coverage

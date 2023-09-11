@@ -100,6 +100,6 @@ python3 proto/public/test_client.py
 欢迎对该项目进行贡献。如果有任何问题、建议或意见，请随时联系我们。
 
 ## 许可证
-该项目基于 MIT 许可证。请查阅 [LICENSE](LICENSE) 文件以获取更多信息。
+该项目基于 Apache 2.0 许可证。请查阅 [LICENSE](LICENSE) 文件以获取更多信息。
 
 感谢您的使用和贡献！🎉
